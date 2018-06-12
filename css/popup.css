@@ -1,0 +1,55 @@
+.dom-tree-container{
+    width:400px;
+    height:600px;
+}
+.dom-tree-header{
+    height:40px;
+    width:100%;
+    background-color: #ffffff;
+    border-bottom:1px solid #b3b3b3;
+    box-shadow: 0 3px 2px 2px rgba(0,0,0,.25);
+    box-sizing: border-box;
+}
+.dom-tree-img-wrapper{
+    height:40px;
+    width:40px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+.dom-tree-header-img{
+    width:30px;
+    height:30px;
+}
+.dom-tree-title{
+    position: absolute;
+    left:50px;
+    top:0;
+    height:40px;
+    color: #535353;
+    line-height: 40px;
+    font-size: 16px;
+    font-family: "Microsoft YaHei";
+}
+.dom-tree-result-panel{
+    width:100%;
+    height:560px;
+    background-color: #ffffff;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.dom-tree-start-btn{
+    outline: none;
+    border:none;
+    width:200px;
+    height:60px;
+    color:#fff;
+    background-color: #6495ed;
+    line-height: 60px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+
+
+
