@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DOM树分析页面</title>
+    <title>网页分析工具</title>
     <link href="./../css/reset.css" rel="stylesheet" type="text/css">
     <link href="./../css/popup.css" rel="stylesheet" type="text/css">
 </head>
@@ -14,13 +14,23 @@
             <img src="./../img/tree.png" class="dom-tree-header-img">
         </div>
         <div class="dom-tree-title">
-            DOM树分析工具
+            网页分析器
         </div>
     </header>
     <div class="dom-tree-result-panel">
-
+        <!--loading界面-->
+        <div class="loading-analysis">
+            <img src="./../img/three-dots.svg" />
+        </div>
+        <div class="dom-tree-start-btn-wrapper">
+            <p class="dom-tree-brief">
+                <span>量化你的网页~</span>
+            </p>
+            <button class="dom-tree-start-btn" id="dom-tree-start-button">开始分析</button>
+        </div>
     </div>
 </div>
+<script src="./../util/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="./../js/popup.js"></script>
 </body>
 </html>
