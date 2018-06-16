@@ -94,5 +94,62 @@
     top:50%;
 }
 
+.dom-tree-data-show-wrapper{
+    width:100%;
+    display: none;
+}
+.dom-tree-item-wrapper{
 
+}
+.dom-tree-data-table{
+    border-collapse: collapse;
+    margin-top: 10px;
+    width:100%;
+    color:#646464;
+}
+.dom-tree-data-table td{
+    border:1px solid #b3b3b3;
+    padding:10px;
+    text-align: center;
+}
+.td-no-padding-bottom{
+    padding-bottom: 0!important;
+}
+.dom-tree-data-table td:first-child{
+    border-left:none;
 
+}
+.dom-tree-data-table td:last-child {
+    border-right:none;
+}
+.dom-tree-data-table tr:first-child{
+    text-align: center;
+}
+.dom-tree-data-table tr:first-child td{
+    border-top:none;
+}
+.dom-tree-data-table tr:not(:first-child) td:first-child{
+    width:30%;
+}
+.dom-tree-item-box{
+    display: inline-block;
+    padding:5px;
+    background-color: #4fc08d;
+    border-radius: 4px;
+    color:#fff;
+    margin:5px;
+}
+.show-tag{
+    cursor: pointer;
+    transition: all .5s;
+}
+.cancel-show-tag,.show-deepest-node,.dom-tree-show-longestpath{
+    background-color: #ffcb4f;
+    cursor: pointer;
+}
+.show-tag:hover{
+    background-color: #56e0a7;
+}
+.dom-tree-item-box-inactive{
+    background-color: #707070;
+}

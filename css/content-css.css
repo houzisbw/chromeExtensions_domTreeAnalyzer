@@ -1,0 +1,10 @@
+.dom-tree-highlight-red-outline{
+    visibility:visible!important;
+    border:3px solid red!important;
+    box-sizing:border-box!important;
+}
+.dom-tree-highlight-show{
+    display: block!important;
+    visibility: visible!important;
+    position: relative;
+}

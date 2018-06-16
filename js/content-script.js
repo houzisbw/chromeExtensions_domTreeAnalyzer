@@ -5,6 +5,10 @@
 //html节点
 ;(function(){
 	var htmlNode = document.getElementsByTagName('html')[0];
+	//最长路径
+	var longestPathList = [];
+	//最深的元素
+	var deepestNode = null;
 	//应对消息的策略对象,每个方法有返回值
 	var onMessageStrategy = {
 		//开始分析
@@ -13,9 +17,65 @@
 			var ret = {};
 			//获取树的深度
 			ret.depthArguments = caculateDomTreeDepth(htmlNode);
+			longestPathList = ret.depthArguments.nodeList;
+			deepestNode = ret.depthArguments.nodeList[0];
 			//获取树各个节点的数量
 			ret.nodeArguments = analysisDomTree();
+			//获取网页宽高
+			ret.pageParamObj = getPageSize()
 			return ret
+		},
+		//高亮选中的tag
+		'HIGHLIGHT_SELECTED_TAG':function(param){
+			var tagName = param.tagName;
+			//不需要高亮的元素
+			var unhighlighted = ['head','link','script','br','meta','title'];
+			//遍历dom树高亮选中的tag
+			var nodeQueue = [];
+			nodeQueue.unshift(htmlNode);
+			while(nodeQueue.length){
+				var curNode = nodeQueue.pop();
+				var nodeTagName = curNode.tagName.toLowerCase();
+				if(nodeTagName===tagName && unhighlighted.indexOf(nodeTagName)===-1){
+					curNode.classList.add('dom-tree-highlight-red-outline');
+				}else{
+					curNode.classList.remove('dom-tree-highlight-red-outline','dom-tree-highlight-show');
+				}
+				for(var i=0;i<curNode.children.length;i++){
+					nodeQueue.unshift(curNode.children[i])
+				}
+			}
+		},
+		//取消高亮
+		'CANCEL_HIGHLIGHT_TAG':function(){
+			var nodeQueue = [];
+			nodeQueue.unshift(htmlNode);
+			while(nodeQueue.length){
+				var curNode = nodeQueue.pop();
+				curNode.classList.remove('dom-tree-highlight-red-outline','dom-tree-highlight-show');
+				for(var i=0;i<curNode.children.length;i++){
+					nodeQueue.unshift(curNode.children[i])
+				}
+			}
+		},
+		//显示最长路径,暂时不做，效果不好
+		'SHOW_LONGEST_PATH':function(){
+
+		},
+		//高亮最深元素
+		'HIGHLIGHT_DEEPEST_NODE':function(){
+			if(deepestNode){
+				deepestNode.classList.add('dom-tree-highlight-red-outline','dom-tree-highlight-show');
+				//把它的父节点都显示出来:display:block,否则无法显示该元素
+				var t = deepestNode.parentNode;
+				while(t){
+					if(t.classList){
+						t.classList.add('dom-tree-highlight-show');
+					}
+					t = t.parentNode;
+				}
+				deepestNode.scrollIntoView();
+			}
 		}
 	};
 
@@ -26,9 +86,8 @@
 		{
 			//收到消息并执行对应的处理方法
 			var returnValue = null;
-			console.log(request.cmd)
 			if(onMessageStrategy[request.cmd]!==undefined){
-				returnValue = onMessageStrategy[request.cmd]();
+				returnValue = onMessageStrategy[request.cmd](request.param);
 				sendResponse(returnValue);
 			}
 		});
@@ -80,20 +139,24 @@
 
 	//获取dom树的深度
 	function caculateDomTreeDepth(root){
-		if(!root)return {depth:0,pathList:[]};
+		if(!root)return {depth:0,pathList:[],nodeList:[]};
 		var tempDepth = 0;
 		var tempList = [];
+		var nodeList = [];
 		for(var i=0;i<root.children.length;i++){
 			var ret = caculateDomTreeDepth(root.children[i]);
 			tempDepth = Math.max(tempDepth,ret.depth);
 			if(ret.pathList.length>tempList.length){
 				tempList = ret.pathList.slice();
+				nodeList = ret.nodeList.slice();
 			}
 		}
-		tempList.push(root);
+		tempList.push(root.nodeName.toLowerCase());
+		nodeList.push(root);
 		return {
 			depth:tempDepth+1,
-			pathList:tempList
+			pathList:tempList,
+			nodeList:nodeList
 		};
 	}
 	//获取dom树各个节点的数量,检测css框架使用的情况,检测使用框架的情况
@@ -197,6 +260,20 @@
 				}
 			}
 		}
+	}
+
+	//获取网页宽高,最小宽度和几屏
+	function getPageSize(){
+		var ret = {};
+		var pageHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+		var clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+		var screenNum = (pageHeight / clientHeight).toFixed(1);
+		//获取网页最小宽度，查看body的min-width属性
+		var bodyMinWidth = getComputedStyle(document.body)['min-width'];
+		ret.pageWidth = bodyMinWidth?(parseInt(bodyMinWidth,10)):null;
+		ret.pageHeight = pageHeight;
+		ret.screenNum = screenNum;
+		return ret
 	}
 
 })();
