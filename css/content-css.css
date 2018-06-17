@@ -6,5 +6,12 @@
 .dom-tree-highlight-show{
     display: block!important;
     visibility: visible!important;
-    position: relative;
+}
+.dom-tree-page-reverse{
+    transform: rotateY(180deg)!important;
+    transition: transform 2s ease;
+}
+.dom-tree-page-reverse-upsidedown{
+    transform: rotateX(180deg)!important;
+    transition: transform 2s ease;
 }

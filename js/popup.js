@@ -16,6 +16,16 @@ var CANCEL_HIGHLIGHT_TAG = 'CANCEL_HIGHLIGHT_TAG';
 var SHOW_LONGEST_PATH = 'SHOW_LONGEST_PATH';
 //高亮最深元素
 var HIGHLIGHT_DEEPEST_NODE = 'HIGHLIGHT_DEEPEST_NODE';
+//翻转页面
+var REVERSE_PAGE = 'REVERSE_PAGE';
+//取消特效
+var CANCEL_ALL_EFFECT = 'CANCEL_ALL_EFFECT';
+//上下翻转
+var REVERSE_UPSIDEDOWN = 'REVERSE_UPSIDEDOWN';
+//页面反色
+var COLOR_INVERSE = 'COLOR_INVERSE';
+//页面旧报纸特效
+var COLOR_OLD_PAPER = 'COLOR_OLD_PAPER';
 
 //获取开始分析按钮
 var startBtn = document.getElementById('dom-tree-start-button');
@@ -143,6 +153,23 @@ function renderPageBasicParams(pageData){
 				param:{}
 			});
 		}
+	});
+	//页面特效策略类{id:特效名称}
+	var pageEffectStrategy = {
+		'dom-tree-page-reverse':REVERSE_PAGE,
+		'dom-tree-page-cancel-all-effect':CANCEL_ALL_EFFECT,
+		'dom-tree-page-reverse-upsidedown':REVERSE_UPSIDEDOWN,
+		'dom-tree-page-inverse-color':COLOR_INVERSE,
+		'dom-tree-page-old-paper':COLOR_OLD_PAPER
+	};
+	$('.dom-tree-result-panel').on('click','div',function(){
+		var id = $(this).attr('id');
+		//翻转页面
+		pageEffectStrategy[id] && sendMessageToContentScript({
+			cmd:pageEffectStrategy[id],
+			param:{}
+		});
+
 	});
 	$('.dom-tree-data-table').html(innerHtml);
 }

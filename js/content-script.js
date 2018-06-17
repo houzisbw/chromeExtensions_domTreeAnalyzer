@@ -9,6 +9,8 @@
 	var longestPathList = [];
 	//最深的元素
 	var deepestNode = null;
+	//是否反色
+	var isColorReversed = false;
 	//应对消息的策略对象,每个方法有返回值
 	var onMessageStrategy = {
 		//开始分析
@@ -68,13 +70,132 @@
 				deepestNode.classList.add('dom-tree-highlight-red-outline','dom-tree-highlight-show');
 				//把它的父节点都显示出来:display:block,否则无法显示该元素
 				var t = deepestNode.parentNode;
-				while(t){
-					if(t.classList){
+				//注意最上层是document对象，无法执行getComputedStyle
+				while(t!==document){
+					//该元素是否隐藏,这里需要判断是否存在style属性
+					var isHidden = getComputedStyle(t).display === 'none';
+					if(t.classList && isHidden){
 						t.classList.add('dom-tree-highlight-show');
 					}
 					t = t.parentNode;
 				}
 				deepestNode.scrollIntoView();
+			}
+		},
+		//左右翻转页面
+		'REVERSE_PAGE':function(){
+			document.body.classList.add('dom-tree-page-reverse')
+		},
+		//上下翻转页面
+		'REVERSE_UPSIDEDOWN':function(){
+			document.body.classList.add('dom-tree-page-reverse-upsidedown')
+		},
+		//页面反色
+		'COLOR_INVERSE':function(){
+			isColorReversed = !isColorReversed;
+			//bfs遍历每个节点，添加类inverse-color,颜色取当前节点颜色的反
+			//注意返回的颜色分为rgb和rgba 2种，分别处理(没有16进制颜色)
+			var nodeQueue = [];
+			nodeQueue.unshift(htmlNode);
+			while(nodeQueue.length){
+				var curNode = nodeQueue.pop();
+				//获取该节点的背景色和文字颜色
+				if(curNode.nodeType === 1){
+					var bgColor = window.getComputedStyle(curNode).backgroundColor;
+					var wordColor = window.getComputedStyle(curNode).color;
+					//背景颜色:判断是否是rgba
+					var rgbaReg = /^rgba/g;
+					if(rgbaReg.test(bgColor)){
+						//获取rgba中的r,g,b;
+						var bgColorStr = bgColor.replace('rgba(','').replace(')','');
+						var splitted = bgColorStr.split(',');
+						var r = splitted[0],g=splitted[1],b=splitted[2],a=splitted[3];
+						var newColor = 'rgba('+(255-parseInt(r,10))+','+(255-parseInt(g,10))+','+(255-parseInt(b,10))+','+a+')';
+						curNode.style.backgroundColor = newColor
+					}else{
+						//如果是rgb
+						var bgColorStr = bgColor.replace('rgb(','').replace(')','');
+						var splitted = bgColorStr.split(',');
+						var r = splitted[0],g=splitted[1],b=splitted[2];
+						var newColor = 'rgb('+(255-parseInt(r,10))+','+(255-parseInt(g,10))+','+(255-parseInt(b,10))+')';
+						curNode.style.backgroundColor = newColor
+					}
+
+					//文字颜色反色:文字颜色只会是rgb
+					var wordColorReg = /^rgb\(/g;
+					if(wordColorReg.test(wordColor)){
+						var colorStr = wordColor.replace('rgb(','').replace(')','');
+						var splitted = colorStr.split(',');
+						var r = splitted[0],g=splitted[1],b=splitted[2];
+						var newColor = 'rgb('+(255-parseInt(r,10))+','+(255-parseInt(g,10))+','+(255-parseInt(b,10))+')';
+						curNode.style.color = newColor
+					}
+
+
+				}
+				for(var i=0;i<curNode.children.length;i++){
+					nodeQueue.unshift(curNode.children[i]);
+				}
+			}
+		},
+		//页面旧报纸特效
+		'COLOR_OLD_PAPER':function(){
+			var nodeQueue = [];
+			nodeQueue.unshift(htmlNode);
+			while(nodeQueue.length){
+				var curNode = nodeQueue.pop();
+				//获取该节点的背景色和文字颜色
+				if(curNode.nodeType === 1){
+					var bgColor = window.getComputedStyle(curNode).backgroundColor;
+					var wordColor = window.getComputedStyle(curNode).color;
+					//背景颜色:判断是否是rgba
+					var rgbaReg = /^rgba/g;
+					if(rgbaReg.test(bgColor)){
+						//获取rgba中的r,g,b;
+						var bgColorStr = bgColor.replace('rgba(','').replace(')','');
+						var splitted = bgColorStr.split(',');
+						var r = splitted[0],g=splitted[1],b=splitted[2],a=splitted[3];
+						var averageColor = Math.floor((parseInt(r,10)+parseInt(g,10)+parseInt(b,10))/3);
+						var newColor = 'rgba('+averageColor+','+averageColor+','+averageColor+','+a+')';
+						curNode.style.backgroundColor = newColor
+					}else{
+						//如果是rgb
+						var bgColorStr = bgColor.replace('rgb(','').replace(')','');
+						var splitted = bgColorStr.split(',');
+						var r = splitted[0],g=splitted[1],b=splitted[2];
+						var averageColor = Math.floor((parseInt(r,10)+parseInt(g,10)+parseInt(b,10))/3);
+						var newColor = 'rgb('+averageColor+','+averageColor+','+averageColor+')';
+						curNode.style.backgroundColor = newColor
+					}
+
+					//文字颜色反色:文字颜色只会是rgb
+					var wordColorReg = /^rgb\(/g;
+					if(wordColorReg.test(wordColor)){
+						var colorStr = wordColor.replace('rgb(','').replace(')','');
+						var splitted = colorStr.split(',');
+						var r = splitted[0],g=splitted[1],b=splitted[2];
+						var averageColor = Math.floor((parseInt(r,10)+parseInt(g,10)+parseInt(b,10))/3);
+						var newColor = 'rgb('+averageColor+','+averageColor+','+averageColor+')';
+						curNode.style.color = newColor
+					}
+
+
+				}
+				for(var i=0;i<curNode.children.length;i++){
+					nodeQueue.unshift(curNode.children[i]);
+				}
+			}
+		},
+		//取消所有特效
+		'CANCEL_ALL_EFFECT':function(){
+			//所有特效类数组
+			var effectList = ['dom-tree-page-reverse','dom-tree-page-reverse-upsidedown'];
+			for(var i=0;i<effectList.length;i++){
+				document.body.classList.remove(effectList[i]);
+			}
+			//取消反色
+			if(isColorReversed){
+				onMessageStrategy['COLOR_INVERSE']();
 			}
 		}
 	};
@@ -91,49 +212,7 @@
 				sendResponse(returnValue);
 			}
 		});
-		// //dom树根节点
-		// var htmlNode = document.getElementsByTagName('html')[0];
-		// //dom节点数量
-		// var domNodeObj = {};
-		// //dom树深度
-		// var domTreeDepth = 0;
-		// //儿子最多的节点
-		// var nodeWithMostChildren = null;
-		// //最多儿子数量
-		// var maxChildrenNum = 0;
-		// //开始分析按钮
-		// var startButton;
-		// //dom加载完成后回调,注意必须延时几秒执行，否则页面还未加载完全
-		// window.addEventListener('load',function(){
-		//
-		// 	//给按钮绑定事件
-		// 	startButton = document.getElementById('dom');
-		// 	console.log(startButton)
-		// 	startButton.addEventListener('click',function(){
-		// 		//计算dom树节点种类和个数
-		// 		analysisDomTree();
-		// 		//计算dom树的层次以及高亮最深层次的一个元素
-		// 		var ret = caculateDomTreeDepth(htmlNode)
-		// 		var deepestNode = ret.pathList[0];
-		// 		//让最深路径上的元素都显示出来
-		// 		for(var i=0;i<ret.pathList.length;i++){
-		// 			var node = ret.pathList[i]
-		// 			node.style.display = 'block';
-		// 			node.style.visibility = 'visible';
-		// 		}
-		// 		//高亮最深的元素
-		// 		deepestNode.style.border = '3px solid red';
-		// 		deepestNode.scrollIntoView();
-		//
-		// 		console.log(nodeWithMostChildren)
-		// 		console.log(maxChildrenNum)
-		// 	});
-		//
-		// });
-		//分析dom树
-
-
-	})
+	});
 
 	//分析方法
 
