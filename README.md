@@ -1,5 +1,5 @@
 # Chrome扩展-网页分析器
-这是一个Chrome扩展，用于分析网页结构数据，量化你的网页,会给出网页结构的各项数据展示，以及一些页面特效功能!<br><br>
+这是一个Chrome扩展，用于分析网页结构数据，量化你的网页,会给出网页结构的各项数据展示，以及一些页面特效功能<br><br>
 ![img](https://github.com/houzisbw/chromeExtensions_domTreeAnalyzer/blob/master/imgs/1.jpg)
 ![img](https://github.com/houzisbw/chromeExtensions_domTreeAnalyzer/blob/master/imgs/2.jpg)
 <br />
